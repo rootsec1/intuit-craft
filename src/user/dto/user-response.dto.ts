@@ -1,4 +1,5 @@
 import { Types } from 'mongoose';
+import { Order } from 'src/order/model/order.schema';
 import { User } from '../model/user.schema';
 
 export class UserResponseDto {
@@ -8,6 +9,7 @@ export class UserResponseDto {
     this.email = user.email;
     this.createdAt = user['createdAt'];
     this.updatedAt = user['updatedAt'];
+    this.orders = user.orders as Order[];
   }
 
   _id: Types.ObjectId;
@@ -19,4 +21,6 @@ export class UserResponseDto {
   createdAt: Date;
 
   updatedAt: Date;
+
+  orders: Order[];
 }

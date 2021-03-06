@@ -1,10 +1,11 @@
+import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { createConnection, Schema } from 'mongoose';
 import * as MongooseAutopopulate from 'mongoose-autopopulate';
 import * as MongooseHistory from 'mongoose-history';
-import { ACTIVE_CONNECTION_NAME } from 'src/constants';
+import { ACTIVE_CONNECTION_NAME, ORDERS_QUEUE_NAME } from 'src/constants';
 import { OrderSchema } from './model/order.schema';
 import { OrderController } from './order.controller';
 import { OrderService } from './order.service';
@@ -39,6 +40,9 @@ import { OrderService } from './order.service';
       ],
       ACTIVE_CONNECTION_NAME,
     ),
+    BullModule.registerQueue({
+      name: ORDERS_QUEUE_NAME,
+    }),
   ],
 })
 export class OrderModule {}

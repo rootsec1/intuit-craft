@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { ACTIVE_CONNECTION_NAME, HISTORY_CONNECTION_NAME } from './constants';
 import { ProductModule } from './product/product.module';
 import { OrderModule } from './order/order.module';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
@@ -23,6 +24,8 @@ import { OrderModule } from './order/order.module';
         RATE_LIMIT: Joi.number().required(),
         JWT_SECRET: Joi.string().required(),
         API_KEY: Joi.string().required(),
+        REDIS_HOST: Joi.string().required(),
+        REDIS_PORT: Joi.number().required(),
       }),
     }),
     MongooseModule.forRootAsync({
@@ -48,6 +51,20 @@ import { OrderModule } from './order/order.module';
         useCreateIndex: true,
       }),
       connectionName: HISTORY_CONNECTION_NAME,
+    }),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (config: ConfigService) => ({
+        redis: {
+          host: config.get<string>('REDIS_HOST'),
+          port: config.get<number>('REDIS_PORT'),
+        },
+        defaultJobOptions: {
+          removeOnComplete: true,
+          removeOnFail: true,
+        },
+      }),
     }),
     AuthModule,
     ProductModule,

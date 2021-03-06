@@ -6,7 +6,7 @@ import { ProductQuantity } from './product-quantity.schema';
 
 @Schema({ timestamps: true, versionKey: false })
 export class Order extends Document {
-  @Prop({ type: () => User, ref: 'User', required: true })
+  @Prop({ type: () => Types.ObjectId, ref: 'User', required: true })
   user: Types.ObjectId | User;
 
   @Prop({ type: () => [ProductQuantity], required: true })
