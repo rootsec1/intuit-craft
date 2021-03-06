@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { ACTIVE_CONNECTION_NAME, HISTORY_CONNECTION_NAME } from './constants';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ACTIVE_CONNECTION_NAME, HISTORY_CONNECTION_NAME } from './constants';
         RATE_LIMIT_WINDOW: Joi.number().required(),
         RATE_LIMIT: Joi.number().required(),
         JWT_SECRET: Joi.string().required(),
+        API_KEY: Joi.string().required(),
       }),
     }),
     MongooseModule.forRootAsync({
@@ -47,6 +49,7 @@ import { ACTIVE_CONNECTION_NAME, HISTORY_CONNECTION_NAME } from './constants';
       connectionName: HISTORY_CONNECTION_NAME,
     }),
     AuthModule,
+    ProductModule,
   ],
   controllers: [AppController],
   providers: [AppService],
