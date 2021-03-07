@@ -1,5 +1,7 @@
+import { Types } from 'mongoose';
+
 export class ProductQuantityInputDto {
-  product: string;
+  product: Types.ObjectId;
 
   quantity: number;
 }

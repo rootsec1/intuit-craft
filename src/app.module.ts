@@ -62,7 +62,6 @@ import { BullModule } from '@nestjs/bull';
         },
         defaultJobOptions: {
           removeOnComplete: true,
-          removeOnFail: true,
         },
       }),
     }),

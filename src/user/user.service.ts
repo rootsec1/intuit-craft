@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { hash } from 'bcrypt';
 import { Model, Types } from 'mongoose';
+import { Order } from 'src/order/model/order.schema';
 import { CreateUserInputDto } from './dto/create-user.input.dto';
 import { UpdateUserInputDto } from './dto/update-user.input.dto';
 import { UserResponseDto } from './dto/user-response.dto';
@@ -50,5 +51,19 @@ export class UserService {
 
   async doesUserWithEmailExist(email: string): Promise<boolean> {
     return this.userModel.exists({ email });
+  }
+
+  async addOrderToUser(order: Order): Promise<User> {
+    return this.userModel.findByIdAndUpdate(
+      order.user,
+      {
+        $addToSet: {
+          orders: order._id,
+        },
+      },
+      {
+        new: true,
+      },
+    );
   }
 }

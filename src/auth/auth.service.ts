@@ -14,9 +14,7 @@ export class AuthService {
   ) {}
 
   async createAuthToken(jwtPayload: JwtPayloadDto): Promise<string> {
-    const user = await this.userService.getUserById(
-      Types.ObjectId(jwtPayload.userId),
-    );
+    const user = await this.userService.getUserById(jwtPayload.user._id);
     return this.jwtService.sign(JSON.parse(JSON.stringify(user)));
   }
 
@@ -26,7 +24,7 @@ export class AuthService {
       if (!user) throw new UnauthorizedException('User does not exist');
       if (await compare(password, user.password)) {
         const payload: JwtPayloadDto = {
-          userId: user._id,
+          user: user,
         };
         const authToken = await this.createAuthToken(payload);
         return new UserAndTokenDto(user, authToken);

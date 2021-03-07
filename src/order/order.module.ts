@@ -6,6 +6,7 @@ import { createConnection, Schema } from 'mongoose';
 import * as MongooseAutopopulate from 'mongoose-autopopulate';
 import * as MongooseHistory from 'mongoose-history';
 import { ACTIVE_CONNECTION_NAME, ORDERS_QUEUE_NAME } from 'src/constants';
+import { UserModule } from 'src/user/user.module';
 import { OrderSchema } from './model/order.schema';
 import { OrderController } from './order.controller';
 import { OrderService } from './order.service';
@@ -14,6 +15,7 @@ import { OrderService } from './order.service';
   providers: [OrderService],
   controllers: [OrderController],
   imports: [
+    UserModule,
     MongooseModule.forFeatureAsync(
       [
         {

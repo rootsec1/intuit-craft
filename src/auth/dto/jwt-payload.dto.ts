@@ -1,9 +1,9 @@
-import { Types } from 'mongoose';
+import { User } from 'src/user/model/user.schema';
 
 export class JwtPayloadDto {
-  constructor(userId: Types.ObjectId) {
-    this.userId = userId.toString();
+  constructor(user: User) {
+    this.user = user;
   }
 
-  userId: string;
+  user: User;
 }
