@@ -1,16 +1,16 @@
 import * as Joi from '@hapi/joi';
 import { BullModule } from '@nestjs/bull';
-import { CacheModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ACTIVE_CONNECTION_NAME, HISTORY_CONNECTION_NAME } from './constants';
+import { HealthModule } from './health/health.module';
 import { OrderModule } from './order/order.module';
 import { ProductModule } from './product/product.module';
 import { UserModule } from './user/user.module';
-import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
