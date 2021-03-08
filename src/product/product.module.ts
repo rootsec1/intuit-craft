@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { createConnection, Schema } from 'mongoose';
@@ -14,6 +14,7 @@ import { ProductService } from './product.service';
   controllers: [ProductController],
   imports: [
     ConfigModule,
+    CacheModule.register(),
     MongooseModule.forFeatureAsync(
       [
         {

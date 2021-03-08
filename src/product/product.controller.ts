@@ -1,5 +1,6 @@
 import {
   Body,
+  CacheInterceptor,
   Controller,
   Delete,
   Get,
@@ -7,9 +8,11 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { Types } from 'mongoose';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { HTTPAPIKeyInterceptor } from 'src/interceptors/http-api-key.interceptor';
 import { CreateProductInputDto } from './dto/create-product.input.dto';
 import { UpdateProductInputDto } from './dto/update-product.input.dto';
@@ -29,15 +32,24 @@ export class ProductController {
   }
 
   @Get()
-  @UseInterceptors(HTTPAPIKeyInterceptor)
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(CacheInterceptor)
   async getAllProducts(): Promise<Product[]> {
     return this.productService.getAllProducts();
   }
 
   @Get(':id')
-  @UseInterceptors(HTTPAPIKeyInterceptor)
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(CacheInterceptor)
   async getProduct(@Param('id') id: string): Promise<Product> {
     return this.productService.getProductById(Types.ObjectId(id));
+  }
+
+  @Get(':id/price')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(CacheInterceptor)
+  async getPriceForProduct(@Param('id') id: string): Promise<number> {
+    return this.productService.getPriceForProduct(Types.ObjectId(id));
   }
 
   @Patch('update')

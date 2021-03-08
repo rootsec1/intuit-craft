@@ -19,9 +19,6 @@ export class OrderService {
 
   async createOrder(orderInput: OrderInputDto): Promise<JobId> {
     const job = await this.ordersQueue.add(orderInput);
-    console.log(
-      'Job created with ID ' + job.id + ' for ' + JSON.stringify(job.data),
-    );
     return job.id;
   }
 

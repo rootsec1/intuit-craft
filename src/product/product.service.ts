@@ -23,6 +23,10 @@ export class ProductService {
     return this.productModel.findById(id);
   }
 
+  async getPriceForProduct(id: Types.ObjectId): Promise<number> {
+    return (await this.productModel.findById(id)).price;
+  }
+
   async updateProduct(
     id: Types.ObjectId,
     updateProductInputDto: UpdateProductInputDto,

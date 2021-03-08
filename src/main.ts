@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import * as rateLimit from 'express-rate-limit';
+import * as helmet from 'helmet';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
@@ -16,6 +17,7 @@ async function bootstrap() {
     }),
   );
   app.enableCors();
-  await app.listen(config.get<string>('PORT'));
+  app.use(helmet());
+  await app.listen(config.get<string>('PORT'), '0.0.0.0');
 }
 bootstrap();
