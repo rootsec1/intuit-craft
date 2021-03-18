@@ -26,7 +26,10 @@ export class OrderService {
   }
 
   async getOrdersByUser(user: Types.ObjectId): Promise<Order[]> {
-    return this.orderModel.find({ user });
+    return this.orderModel.find({ user }).populate({
+      path: 'products.product',
+      model: 'Product',
+    });
   }
 
   async updateOrderStatus(
