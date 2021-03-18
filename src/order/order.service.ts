@@ -4,7 +4,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Job, JobId, Queue } from 'bull';
 import { Model, Types } from 'mongoose';
 import { ORDERS_QUEUE_NAME } from 'src/constants';
+import { ProductService } from 'src/product/product.service';
 import { UserService } from 'src/user/user.service';
+import { OrderStatusUpdateDto } from './dto/order-status-update.dto';
 import { OrderInputDto } from './dto/order.input.dto';
 import { Order } from './model/order.schema';
 
@@ -15,6 +17,7 @@ export class OrderService {
     @InjectModel('Order') private orderModel: Model<Order>,
     @InjectQueue(ORDERS_QUEUE_NAME) private ordersQueue: Queue,
     private userService: UserService,
+    private productService: ProductService,
   ) {}
 
   async createOrder(orderInput: OrderInputDto): Promise<JobId> {
@@ -22,20 +25,40 @@ export class OrderService {
     return job.id;
   }
 
+  async getOrdersByUser(user: Types.ObjectId): Promise<Order[]> {
+    return this.orderModel.find({ user });
+  }
+
+  async updateOrderStatus(
+    orderStatusUpdateDto: OrderStatusUpdateDto,
+  ): Promise<Order> {
+    return this.orderModel.findByIdAndUpdate(
+      orderStatusUpdateDto.orderId,
+      { $set: { status: orderStatusUpdateDto.status } },
+      { new: true },
+    );
+  }
+
   @Process()
   async orderConsumer(job: Job): Promise<void> {
     try {
       const orderInputDto = job.data as OrderInputDto;
       orderInputDto.user = Types.ObjectId(orderInputDto.user.toString());
-      orderInputDto.products = orderInputDto.products.map((productObj) => {
+      let amount = 0;
+      const orderPromise = orderInputDto.products.map(async (productObj) => {
         const productId = Types.ObjectId(productObj.product.toString());
+        const productDoc = await this.productService.getProductById(productId);
+        amount += productDoc.price * productObj.quantity;
         productObj.product = productId;
         return productObj;
       });
+      orderInputDto.products = await Promise.all(orderPromise);
+      orderInputDto.amount = amount;
       const newOrder = await this.orderModel.create(orderInputDto);
       if (newOrder) {
         await this.userService.addOrderToUser(newOrder);
-        await job.moveToCompleted(JSON.stringify(newOrder));
+        const nextJob = await job.moveToCompleted(JSON.stringify(newOrder));
+        if (!nextJob) await this.ordersQueue.clean(0);
       }
     } catch (error) {
       console.log(error);

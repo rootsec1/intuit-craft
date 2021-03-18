@@ -12,6 +12,7 @@ import { ProductService } from './product.service';
 @Module({
   providers: [ProductService],
   controllers: [ProductController],
+  exports: [ProductService],
   imports: [
     ConfigModule,
     CacheModule.register(),

@@ -6,6 +6,7 @@ import { createConnection, Schema } from 'mongoose';
 import * as MongooseAutopopulate from 'mongoose-autopopulate';
 import * as MongooseHistory from 'mongoose-history';
 import { ACTIVE_CONNECTION_NAME, ORDERS_QUEUE_NAME } from 'src/constants';
+import { ProductModule } from 'src/product/product.module';
 import { UserModule } from 'src/user/user.module';
 import { OrderSchema } from './model/order.schema';
 import { OrderController } from './order.controller';
@@ -16,6 +17,8 @@ import { OrderService } from './order.service';
   controllers: [OrderController],
   imports: [
     UserModule,
+    ConfigModule,
+    ProductModule,
     MongooseModule.forFeatureAsync(
       [
         {
@@ -44,6 +47,10 @@ import { OrderService } from './order.service';
     ),
     BullModule.registerQueue({
       name: ORDERS_QUEUE_NAME,
+      defaultJobOptions: {
+        removeOnComplete: true,
+        attempts: 3,
+      },
     }),
   ],
 })
