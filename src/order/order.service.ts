@@ -37,7 +37,12 @@ export class OrderService {
   ): Promise<Order> {
     return this.orderModel.findByIdAndUpdate(
       orderStatusUpdateDto.orderId,
-      { $set: { status: orderStatusUpdateDto.status } },
+      {
+        $set: {
+          status: orderStatusUpdateDto.status,
+          _id: Types.ObjectId(orderStatusUpdateDto.orderId.toString()),
+        },
+      },
       { new: true },
     );
   }

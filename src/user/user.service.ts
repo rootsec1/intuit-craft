@@ -36,7 +36,7 @@ export class UserService {
   ): Promise<User> {
     return this.userModel.findByIdAndUpdate(
       id,
-      { $set: updateUserInputDto },
+      { $set: { ...updateUserInputDto, _id: id } },
       { new: true },
     );
   }
